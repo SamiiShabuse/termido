@@ -16,4 +16,8 @@ void markTaskCompleted(int index);
 
 void removeTask(int index);
 
+void saveTasks(const char *filename);
+
+void loadTasks(const char *filename);
+
 #endif

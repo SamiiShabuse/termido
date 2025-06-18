@@ -6,6 +6,9 @@
 #define INPUT_SIZE 300
 
 int main() {
+    const char *filename = "tasks.txt";
+    loadTasks(filename); // Load tasks from file at startup
+
     char input[INPUT_SIZE];
 
     printf("Welcome to TermiDo! - Your Terminal Based To-Do List\n");
@@ -41,6 +44,9 @@ int main() {
             printf("Unknown command: %s\n", input);
         }
     }
+
+    // Save tasks to file before exiting
+    saveTasks(filename);
 
     printf("Exiting TermiDo. Goodbye!\n");
     return 0;

@@ -73,3 +73,41 @@ void removeTask(int index) {
 
     printf("Task %d removed.\n", index);
 }
+
+void saveTasks(const char *filename) {
+    FILE *file = fopen(filename, "w");
+    if (!file) {
+        printf("Error opening file for saving tasks.\n");
+        return;
+    }
+
+    for (int i = 0; i < taskCount; i++) {
+        fprintf(file, "%s|%d\n", taskList[i].description, taskList[i].completed);
+    }
+
+    fclose(file);
+    printf("Tasks saved to %s.\n", filename);
+}
+
+void loadTasks(const char *filename) {
+    FILE *file = fopen(filename, "r");
+    if (!file) {
+        return; // If the file doesn't exist, we simply return
+    }
+
+    char line[300];
+    while (fgets(line, sizeof(line), file)) {
+        int done;
+        char description[256];
+        if (sscanf(line, "%255[^|]|%d", description, &done) == 2) {
+            if (taskCount < MAX_TASKS) {
+                strcpy(taskList[taskCount].description, description);
+                taskList[taskCount].description[sizeof(taskList[taskCount].description) - 1] = '\0'; // Ensure null termination
+                taskList[taskCount].completed = done;
+                taskCount++;
+            }
+        }
+    }
+    fclose(file);
+    printf("Tasks loaded from %s.\n", filename);
+}   
