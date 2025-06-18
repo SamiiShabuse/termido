@@ -1,6 +1,6 @@
 CC = gcc
 CFLAGS = -Wall -Wextra -I./src
-OBJ = src/main.o src/todo.o
+OBJ = build/main.o build/todo.o 
 TARGET = termido
 
 all: $(TARGET)
@@ -8,7 +8,7 @@ all: $(TARGET)
 $(TARGET): $(OBJ)
 	$(CC) $(OBJ) -o $(TARGET)
 
-%.o: %.c
+build/%.o: src/%.c
 	$(CC) $(CFLAGS) -c $< -o $@
 
 clean:
