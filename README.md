@@ -8,10 +8,13 @@ A simple C program that combines a:
 Built to relearn and master the C programming language from scratch.
 
 ## Features
-- Add, list, delete, and complete tasks
-- Save/load encrypted task list using XOR encryption
-- Run terminal commands like `ls`, `pwd`, `echo` via shell mode
-- File-based task storage secured with a custom key
+- Add tasks with descriptions
+- List all tasks with completion status
+- Mark tasks as done
+- Delete tasks by index
+- Save tasks to an encrypted file (`tasks.enc`)
+- Load tasks on startup with automatic decryption
+- CLI-style terminal interface
 
 ## Build & Run
 
@@ -19,6 +22,27 @@ Built to relearn and master the C programming language from scratch.
 make
 ./termido
 ```
+
+## Commands
+
+```bash
+add [task]       - Add a new task
+list             - View all tasks
+done [index]     - Mark a task as completed
+remove [index]   - Delete a task
+help             - View commands
+exit             - Save and exit
+```
+
+## File Storage
+
+- Tasks are saved to `tasks.enc` on exit.
+- The file is encrypted using a basic XOR cipher.
+- Decrypted automatically when the app starts.
+
+## Encryption Info
+- XOR encryption with a hardcoded key: `"supersecret"`
+- (Future plan: let user input their own key at runtime)
 
 ## Style
 🧠 Git Commit Strategy: I follow the [Conventional Commits](https://www.conventionalcommits.org/en/v1.0.0/) spec to ensure clean versioning, maintainability, and compatibility with automated tooling.
