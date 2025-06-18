@@ -36,8 +36,9 @@ void listTasks(void) {
     // Print the list of tasks
     printf("Tasks:\n");
     for (int i = 0; i < taskCount; i++) {
-       printf("[%c] %s\n", 
+       printf("[%c] Task Item %i: %s\n", 
               taskList[i].completed ? 'X' : ' ', 
+              i,
               taskList[i].description);
     }
     printf("Total tasks: %d\n", taskCount);
