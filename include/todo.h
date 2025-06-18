@@ -9,6 +9,11 @@ typedef struct {
 } Task;
 
 void addTask(const char *desc);
+
 void listTasks(void);
+
+void markTaskCompleted(int index);
+
+void removeTask(int index);
 
 #endif

@@ -42,3 +42,33 @@ void listTasks(void) {
     }
     printf("Total tasks: %d\n", taskCount);
 }
+
+void markTaskCompleted(int index) {
+    // Check if the index is valid
+    if (index < 0 || index >= taskCount) {
+        printf("Invalid task index.\n");
+        return;
+    }
+
+    // Mark the task as completed
+    taskList[index].completed = 1;
+    printf("Task %d marked as completed.\n", index);
+}
+
+void removeTask(int index) {
+    // Check if the index is valid
+    if (index < 0 || index >= taskCount) {
+        printf("Invalid task index.\n");
+        return;
+    }
+
+    // Shift tasks to remove the specified task
+    for (int i = index; i < taskCount - 1; i++) {
+        taskList[i] = taskList[i + 1];
+    }
+
+    // Decrement the task count
+    taskCount--;
+
+    printf("Task %d removed.\n", index);
+}
