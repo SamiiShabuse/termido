@@ -1,6 +1,6 @@
 CC = gcc
-CFLAGS = -Wall -Wextra -I./src
-OBJ = build/main.o build/todo.o 
+CFLAGS = -Wall -Wextra -I./include
+OBJ = build/main.o build/todo.o
 TARGET = termido
 
 all: $(TARGET)
