@@ -6,7 +6,7 @@
 #define INPUT_SIZE 300
 
 int main() {
-    const char *filename = "tasks.txt";
+    const char *filename = "tasks.enc";
     loadTasks(filename); // Load tasks from file at startup
 
     char input[INPUT_SIZE];

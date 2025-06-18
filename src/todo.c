@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include <string.h>
 #include "todo.h"
+#include "crypto.h"
 
 static Task taskList[MAX_TASKS];
 static int taskCount = 0;
@@ -81,8 +82,12 @@ void saveTasks(const char *filename) {
         return;
     }
 
+    char buffer[512];
     for (int i = 0; i < taskCount; i++) {
-        fprintf(file, "%s|%d\n", taskList[i].description, taskList[i].completed);
+        // Prepare the task description and completion status for saving
+        snprintf(buffer, sizeof(buffer), "%s|%d\n", taskList[i].description, taskList[i].completed);
+        xorEncryptDecrypt(buffer, "supersecret", strlen(buffer)); // Encrypt the task data
+        fwrite(buffer, sizeof(char), strlen(buffer), file);
     }
 
     fclose(file);
@@ -91,12 +96,11 @@ void saveTasks(const char *filename) {
 
 void loadTasks(const char *filename) {
     FILE *file = fopen(filename, "r");
-    if (!file) {
-        return; // If the file doesn't exist, we simply return
-    }
+    if (!file) return; // If the file doesn't exist, we simply return
 
-    char line[300];
+    char line[512];
     while (fgets(line, sizeof(line), file)) {
+        xorEncryptDecrypt(line, "supersecret", strlen(line)); // Decrypt the task data
         int done;
         char description[256];
         if (sscanf(line, "%255[^|]|%d", description, &done) == 2) {
