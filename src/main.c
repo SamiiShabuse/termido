@@ -2,6 +2,7 @@
 #include <string.h>
 #include <stdlib.h>
 #include "todo.h"
+#include "crypto.h"
 
 #define INPUT_SIZE 300
 

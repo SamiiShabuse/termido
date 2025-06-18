@@ -76,42 +76,53 @@ void removeTask(int index) {
 }
 
 void saveTasks(const char *filename) {
-    FILE *file = fopen(filename, "w");
-    if (!file) {
-        printf("Error opening file for saving tasks.\n");
+    FILE *fp = fopen(filename, "wb");
+    if (!fp) {
+        perror("Failed to save tasks");
         return;
     }
 
-    char buffer[512];
+    char buffer[8192] = "";  // big enough for all tasks
+    char line[512];
+
     for (int i = 0; i < taskCount; i++) {
-        // Prepare the task description and completion status for saving
-        snprintf(buffer, sizeof(buffer), "%s|%d\n", taskList[i].description, taskList[i].completed);
-        xorEncryptDecrypt(buffer, "supersecret", strlen(buffer)); // Encrypt the task data
-        fwrite(buffer, sizeof(char), strlen(buffer), file);
+        snprintf(line, sizeof(line), "%s|%d\n", taskList[i].description, taskList[i].completed);
+        strncat(buffer, line, sizeof(buffer) - strlen(buffer) - 1);
     }
 
-    fclose(file);
-    printf("Tasks saved to %s.\n", filename);
+    size_t bufferLength = strlen(buffer);
+    xorEncryptDecrypt(buffer, "supersecret", bufferLength);
+    fwrite(buffer, 1, bufferLength, fp);
+
+    fclose(fp);
+    printf("Tasks encrypted and saved to '%s'\n", filename);
 }
 
-void loadTasks(const char *filename) {
-    FILE *file = fopen(filename, "r");
-    if (!file) return; // If the file doesn't exist, we simply return
 
-    char line[512];
-    while (fgets(line, sizeof(line), file)) {
-        xorEncryptDecrypt(line, "supersecret", strlen(line)); // Decrypt the task data
+void loadTasks(const char *filename) {
+    FILE *fp = fopen(filename, "rb");
+    if (!fp) return;
+
+    char buffer[8192];
+    size_t bytesRead = fread(buffer, 1, sizeof(buffer) - 1, fp);
+    fclose(fp);
+
+    buffer[bytesRead] = '\0';  // null-terminate
+    xorEncryptDecrypt(buffer, "supersecret", bytesRead);
+
+    // Now parse buffer line-by-line
+    char *line = strtok(buffer, "\n");
+    while (line != NULL && taskCount < MAX_TASKS) {
+        char desc[256];
         int done;
-        char description[256];
-        if (sscanf(line, "%255[^|]|%d", description, &done) == 2) {
-            if (taskCount < MAX_TASKS) {
-                strcpy(taskList[taskCount].description, description);
-                taskList[taskCount].description[sizeof(taskList[taskCount].description) - 1] = '\0'; // Ensure null termination
-                taskList[taskCount].completed = done;
-                taskCount++;
-            }
+        if (sscanf(line, "%255[^|]|%d", desc, &done) == 2) {
+            strncpy(taskList[taskCount].description, desc, sizeof(taskList[taskCount].description) - 1);
+            taskList[taskCount].description[sizeof(taskList[taskCount].description) - 1] = '\0';
+            taskList[taskCount].completed = done;
+            taskCount++;
         }
+        line = strtok(NULL, "\n");
     }
-    fclose(file);
-    printf("Tasks loaded from %s.\n", filename);
-}   
+
+    printf("Loaded %d task(s) from '%s'\n", taskCount, filename);
+}
